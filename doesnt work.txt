@@ -1,0 +1,120 @@
+var request = require('request');
+var inquirer = require('inquirer');
+
+// var input;
+
+// process.argv.shift();  // skip node.exe
+// process.argv.shift();  // skip name of js file
+
+// input = process.argv.join(" ");
+
+// // Grab or assemble the movie name and store it in a variable called "movieName"
+// var movieName = input;
+
+// // Then run a request to the OMDB API with the movie specified
+// var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+
+// // This line is just to help us debug against the actual URL.
+// console.log(queryUrl);
+
+// request(queryUrl, function(error, response, body) {
+
+//   // If the request is successful
+//   if (!error && response.statusCode === 200) {
+//     var movie = JSON.parse(body);
+//     // Parse the body of the site and recover just the imdbRating
+//     // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it)
+//     console.log(movie.Title + " ("+movie.Year+")");
+//     console.log("Runtime: "+movie.Runtime);
+//     console.log("Rating: " + movie.imdbRating);
+//     console.log("Genre(s): "+movie.Genre);
+//     console.log("Director: "+movie.Director+" || Actors: "+movie.Actors);
+//     console.log("Plot: "+movie.Plot);
+//   } else {
+//       console.log("Error! Code: "+request.statusCode);
+//   }
+// });
+
+function printGenres(genreData){
+  var genres = [{ "id": 28, "name": "Action" }, { "id": 12, "name": "Adventure" }, { "id": 16, "name": "Animation" },
+      { "id": 35, "name": "Comedy" }, { "id": 80, "name": "Crime" }, { "id": 99, "name": "Documentary" }, { "id": 18, "name": "Drama" },
+      { "id": 10751, "name": "Family" }, { "id": 14, "name": "Fantasy" }, { "id": 36, "name": "History" }, { "id": 27, "name": "Horror" },
+      { "id": 10402, "name": "Music" }, { "id": 9648, "name": "Mystery" }, { "id": 10749, "name": "Romance" }, { "id": 878, "name": "Science Fiction" },
+      { "id": 10770, "name": "TV Movie" }, { "id": 53, "name": "Thriller" }, { "id": 10752, "name": "War" }, { "id": 37, "name": "Western" },
+      {"id":10759,"name":"Action & Adventure"},{"id":10751,"name":"Family"},{"id":10762,"name":"Kids"},
+      {"id":10763,"name":"News"},{"id":10764,"name":"Reality"},{"id":10765,"name":"Sci-Fi & Fantasy"},{"id":10766,"name":"Soap"},{"id":10767,"name":"Talk"},
+      {"id":10768,"name":"War & Politics"}];
+
+  var genreOutput = [];
+  var j = 0;
+
+  for(var i=0 ; i < genres.length ; i++){
+      if(genres[i].id == genreData[j]){
+          genreOutput[j] = genres[i].name;
+          j++;
+      }
+  }
+
+  return genreOutput;
+}
+
+function movieSearch(title){
+  var queryUrl = "https://api.themoviedb.org/3/search/multi?api_key=d19279e423255c630256c57ee162db9f&language=en-US&page=1&include_adult=false&query="+title;
+
+  request(queryUrl,function(error,response,body){
+    // If the request is successful
+    if (!error && response.statusCode === 200) {
+      var movie = JSON.parse(body);
+      var movieResults = movie.results;
+      movieInfo = movieResults;
+    } else {
+        console.log("Error! Code: "+request.statusCode);
+    }
+  });
+}
+
+// function movieTables(movieJson){
+//   var table = [];
+//   for(var i=0;i<movieJson.length;i++){
+//     table[i] = movieJson[i].title;
+//   }
+//   console.log(table);
+
+//   inquirer.prompt([
+//     {
+//       type: "list",
+//       choices: table,
+//       name: "movieName"
+//     }
+//   ]).then(function(response){
+//     console.log("You picked" + response.movieName);
+//   });
+// }
+
+var movieInfo;
+var movieTable;
+
+inquirer.prompt([
+  {
+    type: "input",
+    name: "movieInput",
+    message: "Search a movie:"
+  }
+]).then(function(response) {
+  movieSearch(response.movieInput).then(function(){
+    movieTable = [];
+    for(var i=0;i<movieInfo;i++){
+      movieTable[i] = (i+1)+" "+movieInfo[i].title;
+    }
+    console.log(movieTable);
+  });
+}).then(inquirer.prompt([
+  {
+    type: "list",
+    choices: table,
+    name: "movieName"
+  }
+]).then(function(response){
+  
+})
+);
