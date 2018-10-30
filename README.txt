@@ -1,0 +1,1 @@
+Works as "node liri.js [movie title]"
